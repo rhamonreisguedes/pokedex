@@ -1,11 +1,9 @@
-import './App.css';
+import Pokedex from "./pokedex/Pokedex";
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Pokedex</h1>
-    </div>
-  );
-}
+const App: React.FC = () => {
+  return (<>
+    <Pokedex />
+  </>);
+};
 
 export default App;
