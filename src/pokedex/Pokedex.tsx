@@ -1,37 +1,27 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { listPokemons, PokemonListInterface } from "../pokemon/services/listPokemons";
+import { getPokemonsDetails } from "../pokemon/services/getPokemonDetails";
+import { PokemonDetail } from "../pokemon/interfaces/PokemonDetail";
 
 interface PokedexProps {}
-
-interface PokemonListInterface {
-  name: string;
-  url: string;
-}
-
-// async function getDetailsfromPokemon(pokemon: PokemonListInterface){
-//   await axios.get('https://pokeapi.co/api/v2/pokemon').then((response) => setPokemons(response.data.))
-// }
 
 export const Pokedex: React.FC<PokedexProps> = () => {
   const [pokemons, setPokemons] = useState<PokemonListInterface[]>([]);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonListInterface | undefined>(
     undefined
   );
-  const [selectedPokemonDetails, setSelectedPokemonDetails] = useState<any | undefined>(undefined);
+  const [selectedPokemonDetails, setSelectedPokemonDetails] = useState<PokemonDetail | undefined>(undefined);
 
   useEffect(() => {
-    axios
-      .get("https://pokeapi.co/api/v2/pokemon")
-      .then((response) => setPokemons(response.data.results));
+    listPokemons()
+      .then((response) => setPokemons(response.results));
   }, []);
 
   useEffect(() => {
     if (!selectedPokemon) return;
 
-    axios
-    .get(`https://pokeapi.co/api/v2/pokemon/${selectedPokemon.name}`)
-    .then((response) => setSelectedPokemonDetails(response.data));    
+    getPokemonsDetails(selectedPokemon.name)
+    .then((response) => setSelectedPokemonDetails(response));    
 
   }, [selectedPokemon]);
 
