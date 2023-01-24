@@ -12,11 +12,10 @@ import { Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import {useParams} from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { getPokemonsDetails } from "./getPokemonDetails";
 
 interface PokemonDetailsProps {}
-
 
 export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
   const { name } = useParams();
@@ -30,7 +29,7 @@ export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
     getPokemonsDetails(name).then((response) =>
       setSelectedPokemonDetails(response)
     );
-  }, []);
+  }, [name]);
 
   return (
     <div>
@@ -51,16 +50,50 @@ export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
           <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
+
       <Container maxWidth="lg">
         <Box m={2}>
           Pokemons:
-          <h2>
-            Pokemon Selecionado: {name}
-          </h2>
-          <img src={selectedPokemonDetails?.sprites.front_default} alt=""/>
-          {/* {JSON.stringify(selectedPokemonDetails, undefined, 2)} */}
-          {JSON.stringify(selectedPokemonDetails?.sprites.front_default, undefined, 2)}
+          <h2>Pokemon Selecionado: {name}</h2>
+          <img
+            width="100%"
+            height="auto"
+            src={selectedPokemonDetails?.sprites.front_default}
+            alt=""
+          />
+          {/* {JSON.stringify(selectedPokemonDetails?.sprites.front_default, undefined, 2)} */}
         </Box>
+        <Typography variant='h3'>{selectedPokemonDetails?.name}</Typography>
+        <Typography>
+          {selectedPokemonDetails?.types.map((type) => (
+            <Typography>{type.type.name}</Typography>
+          ))}
+
+          <Box display="flex" justifyContent="row">
+            <Typography>Espécie:</Typography>
+            <Typography>{selectedPokemonDetails?.species.name}</Typography>
+          </Box>
+
+          <Box display="flex" justifyContent="row">
+            <Typography>Altura:</Typography>
+            <Typography>{selectedPokemonDetails?.height}</Typography>
+          </Box>
+
+          <Box display="flex" justifyContent="row">
+            <Typography>Peso:</Typography>
+            <Typography>{selectedPokemonDetails?.weight}</Typography>
+          </Box>
+
+          <Box display="flex" justifyContent="row">
+            <Typography>Habilidades:</Typography>
+            <Typography>
+              {" "}
+              {selectedPokemonDetails?.abilities.map((ability) => (
+                <Typography>{ability.ability.name}</Typography>
+              ))}
+            </Typography>
+          </Box>
+        </Typography>
       </Container>
     </div>
   );

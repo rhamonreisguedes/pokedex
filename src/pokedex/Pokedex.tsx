@@ -17,7 +17,8 @@ import { Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import { useNavigate } from "react-router-dom";
+
+import PokedexCard from "./components/PokedexCard";
 
 interface PokedexProps {}
 
@@ -26,15 +27,13 @@ export const Pokedex: React.FC<PokedexProps> = () => {
   const [selectedPokemon, setSelectedPokemon] = useState<
     PokemonListInterface | undefined
   >(undefined);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     listPokemons().then((response) => setPokemons(response.results));
   }, []);
 
-  function handleClick(pokemon: PokemonListInterface){
-    navigate(`/pokemon/${pokemon.name}`);
-  }
+
 
   return (
     <div>
@@ -53,7 +52,6 @@ export const Pokedex: React.FC<PokedexProps> = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Pokedex
             </Typography>
-            <Button color="inherit">Login</Button>
           </Toolbar>
         </AppBar>
       </Box>
@@ -63,21 +61,7 @@ export const Pokedex: React.FC<PokedexProps> = () => {
             {pokemons.map((pokemon, key) => (
               <>
                 <Grid item xs={6} lg={3}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography variant="h5" component="div">
-                        {pokemon.name}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        onClick={() => handleClick(pokemon)}
-                        size="small"
-                      >
-                        Abrir
-                      </Button>
-                    </CardActions>
-                  </Card>
+                  <PokedexCard pokemon={pokemon}/>
                 </Grid>
               </>
             ))}
