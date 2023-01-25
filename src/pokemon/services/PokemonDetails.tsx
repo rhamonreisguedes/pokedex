@@ -12,49 +12,38 @@ import { Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getPokemonsDetails } from "./getPokemonDetails";
+import { useQuery } from "react-query";
+
 
 interface PokemonDetailsProps {}
 
+
 export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
+  const navigate = useNavigate();
   const { name } = useParams();
-  const [selectedPokemonDetails, setSelectedPokemonDetails] = useState<
-    PokemonDetail | undefined
-  >(undefined);
 
-  useEffect(() => {
-    if (!name) return;
-
-    getPokemonsDetails(name).then((response) =>
-      setSelectedPokemonDetails(response)
-    );
-  }, [name]);
+  const { data } = useQuery(`getPokemonDetails-${name}`, () =>
+    getPokemonsDetails(name)
+  );
+  const selectedPokemonDetails = data;
 
   return (
-    <div>
+    <>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Pokemon Selecionado: {name}
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button onClick={() => navigate("/")}>
+            <Typography style={{ color: "white" }}>Voltar</Typography>
+          </Button>
         </Toolbar>
       </AppBar>
 
       <Container maxWidth="lg">
         <Box m={2}>
-          Pokemons:
-          <h2>Pokemon Selecionado: {name}</h2>
           <img
             width="100%"
             height="auto"
@@ -63,7 +52,7 @@ export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
           />
           {/* {JSON.stringify(selectedPokemonDetails?.sprites.front_default, undefined, 2)} */}
         </Box>
-        <Typography variant='h3'>{selectedPokemonDetails?.name}</Typography>
+        <Typography variant="h3">{selectedPokemonDetails?.name}</Typography>
         <Typography>
           {selectedPokemonDetails?.types.map((type) => (
             <Typography>{type.type.name}</Typography>
@@ -95,7 +84,7 @@ export const PokemonDetails: React.FC<PokemonDetailsProps> = () => {
           </Box>
         </Typography>
       </Container>
-    </div>
+    </>
   );
 };
 

@@ -21,12 +21,16 @@ export async function listPokemons(): Promise<listPokemonsInterface> {
 
   const promiseArr = await response.data.results.map(({ name }) =>
     getPokemonsDetails(name)
-  )
+  );
 
-  const resultsPromise = await Promise.all(promiseArr)
+  const resultsPromise = await Promise.all(promiseArr);
+
+  //await 2 seconds to simulate a bad connection
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   return {
     ...response.data,
-    results: resultsPromise
+    results: resultsPromise,
   };
 }

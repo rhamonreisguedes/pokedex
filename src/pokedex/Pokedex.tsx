@@ -1,39 +1,27 @@
-import React, { useEffect, useState } from "react";
-import {
-  listPokemons,
-  PokemonListInterface,
-} from "../pokemon/services/listPokemons";
-import { getPokemonsDetails } from "../pokemon/services/getPokemonDetails";
-import { PokemonDetail } from "../pokemon/interfaces/PokemonDetail";
+import { listPokemons } from "../pokemon/services/listPokemons";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Container } from "@mui/system";
-import { Grid } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-
+import { Button, CircularProgress, Grid, LinearProgress } from "@mui/material";
 import PokedexCard from "./components/PokedexCard";
+import { useQuery } from "react-query";
 
 interface PokedexProps {}
 
 export const Pokedex: React.FC<PokedexProps> = () => {
-  const [pokemons, setPokemons] = useState<PokemonDetail[]>([]);
-  const [selectedPokemon, setSelectedPokemon] = useState<
-    PokemonListInterface | undefined
-  >(undefined);
-
-
-  useEffect(() => {
-    listPokemons().then((response) => setPokemons(response.results));
-  }, []);
-
-
+  const { data, isLoading, isRefetching, refetch, isStale } = useQuery(
+    `listPokemons`,
+    listPokemons,
+    {
+      onSuccess: (data) => console.log(`Sucesso!`),
+      onError: (error) => console.log(`Erro!`),
+      onSettled: (data) => console.log(`Settled!`),
+    }
+  );
 
   return (
     <div>
@@ -53,20 +41,37 @@ export const Pokedex: React.FC<PokedexProps> = () => {
               Pokedex
             </Typography>
           </Toolbar>
+          {isRefetching && (
+            <LinearProgress variant="indeterminate" color="secondary" />
+          )}
         </AppBar>
       </Box>
+
       <Container maxWidth="lg">
-        <Box m={2}>
-          <Grid container spacing={2}>
-            {pokemons.map((pokemon, key) => (
-              <>
-                <Grid item xs={6} lg={3}>
-                  <PokedexCard pokemon={pokemon}/>
-                </Grid>
-              </>
-            ))}
-          </Grid>
-        </Box>
+        <div style={{ marginTop: "1em", marginBottom: "1em" }}>
+          {isStale && (
+            <Button variant="outlined" onClick={() => refetch}>
+              Refetch
+            </Button>
+          )}
+        </div>
+        {!isLoading ? (
+          <Box m={2}>
+            <Grid container spacing={2}>
+              {data?.results.map((pokemon, key) => (
+                <>
+                  <Grid item xs={6} lg={3}>
+                    <PokedexCard pokemon={pokemon} />
+                  </Grid>
+                </>
+              ))}
+            </Grid>
+          </Box>
+        ) : (
+          <div>
+            <CircularProgress />
+          </div>
+        )}
       </Container>
     </div>
   );
